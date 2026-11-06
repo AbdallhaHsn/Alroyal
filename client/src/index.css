@@ -110,10 +110,74 @@
   background: #64748b;
 }
 
+.print-only {
+  display: none !important;
+}
+
 @media print {
   @page {
     size: A4 portrait;
     margin: 6mm 5mm 8mm 5mm;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  body.voucher-modal-active main,
+  body.voucher-modal-active header,
+  body.voucher-modal-active aside,
+  body.voucher-modal-active .no-print {
+    display: none !important;
+  }
+
+  body.voucher-modal-active,
+  body.voucher-modal-active #root,
+  body.voucher-modal-active .voucher-modal-overlay {
+    position: static !important;
+    background: #ffffff !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  body.voucher-modal-active .voucher-modal-card {
+    position: static !important;
+    border: none !important;
+    box-shadow: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    background: #ffffff !important;
+  }
+
+  body.voucher-modal-active .voucher-modal-body {
+    padding: 0 !important;
+    overflow: visible !important;
+    max-height: none !important;
+  }
+
+  .voucher-official-table {
+    border-collapse: collapse !important;
+    width: 100% !important;
+  }
+
+  .voucher-official-table th,
+  .voucher-official-table td {
+    border: 1px solid #475569 !important;
+    padding: 4px 5px !important;
+    font-size: 9.5px !important;
+  }
+
+  .voucher-official-table th {
+    background-color: #f1f5f9 !important;
+    color: #0f172a !important;
+    font-weight: 700 !important;
   }
 
   * {

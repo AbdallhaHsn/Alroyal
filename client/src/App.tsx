@@ -644,6 +644,17 @@ export default function App() {
   };
 
   useEffect(() => {
+    if (modalEntry) {
+      document.body.classList.add('voucher-modal-active');
+    } else {
+      document.body.classList.remove('voucher-modal-active');
+    }
+    return () => {
+      document.body.classList.remove('voucher-modal-active');
+    };
+  }, [modalEntry]);
+
+  useEffect(() => {
     loadDashboard();
   }, []);
 
@@ -2874,9 +2885,11 @@ export default function App() {
 
       {/* FULL PRINTABLE ACCOUNTING VOUCHER MODAL */}
       {modalEntry && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white border border-slate-300 rounded-2xl w-full max-w-4xl overflow-hidden shadow-2xl flex flex-col max-h-[92vh]">
-            <div className="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 voucher-modal-overlay">
+          <div className="bg-white border border-slate-300 rounded-2xl w-full max-w-4xl overflow-hidden shadow-2xl flex flex-col max-h-[92vh] voucher-modal-card">
+            
+            {/* Screen Action Header (hidden on print) */}
+            <div className="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between no-print">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold shadow-md shadow-blue-500/20">
                   <ReceiptText className="w-5 h-5" />
@@ -2896,85 +2909,159 @@ export default function App() {
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => window.print()}
-                  className="flex items-center gap-1.5 bg-white hover:bg-slate-100 border border-slate-300 text-slate-700 px-3 py-1.5 rounded-xl text-xs font-bold transition shadow-2xs"
+                  className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm cursor-pointer"
                 >
-                  <Printer className="w-3.5 h-3.5 text-blue-600" />
-                  <span>طباعة السند</span>
+                  <Printer className="w-4 h-4" />
+                  <span>طباعة السند الرسمي</span>
                 </button>
                 <button
                   onClick={() => setModalEntry(null)}
-                  className="text-slate-400 hover:text-slate-700 p-1.5 rounded-lg hover:bg-slate-200 transition"
+                  className="text-slate-400 hover:text-slate-700 p-1.5 rounded-lg hover:bg-slate-200 transition cursor-pointer"
+                  title="إغلاق"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
             </div>
 
-            <div className="p-6 overflow-y-auto space-y-4">
+            {/* Voucher Body (Printable & Screen) */}
+            <div className="p-6 overflow-y-auto space-y-4 voucher-modal-body">
+              
+              {/* 1. Official Printable Letterhead (Printed only) */}
+              <div className="print-only border-b-2 border-slate-900 pb-3 mb-4">
+                <div className="flex items-start justify-between">
+                  <div className="text-right">
+                    <h1 className="text-xl font-black text-slate-950 font-sans tracking-tight">الرويال للتطوير العقاري</h1>
+                    <p className="text-xs font-bold text-slate-700 mt-0.5">الإدارة المالية والحسابات العامة</p>
+                    <p className="text-[10px] text-slate-500 font-mono">نظام الإدارة المالية والمحاسبية الموحد</p>
+                  </div>
+
+                  <div className="text-center px-6 py-2 border-2 border-slate-900 rounded-xl bg-slate-50">
+                    <h2 className="text-lg font-black text-slate-900 font-sans">سند قيد محاسبي</h2>
+                    <p className="text-[10px] font-mono uppercase tracking-widest text-slate-600 font-bold">Journal Voucher</p>
+                  </div>
+
+                  <div className="text-left text-[10.5px] space-y-1">
+                    <div><span className="text-slate-500">رقم القيد: </span><span className="font-mono font-bold text-slate-900">{modalEntry.reqNum}</span></div>
+                    <div><span className="text-slate-500">تاريخ القيد: </span><span className="font-mono font-bold text-slate-900">{modalEntry.lines[0]?.TheDate ? formatDate(modalEntry.lines[0].TheDate) : '-'}</span></div>
+                    <div><span className="text-slate-500">تاريخ الطباعة: </span><span className="font-mono text-slate-700">{new Date().toLocaleDateString('ar-EG')}</span></div>
+                  </div>
+                </div>
+              </div>
+
+              {/* 2. Voucher Metadata Bar */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs">
+                <div>
+                  <span className="text-slate-500 block text-[10px]">رقم القيد / السند:</span>
+                  <span className="font-mono font-bold text-slate-900">{modalEntry.reqNum}</span>
+                </div>
+                <div>
+                  <span className="text-slate-500 block text-[10px]">تاريخ القيد:</span>
+                  <span className="font-mono font-bold text-slate-900">{modalEntry.lines[0]?.TheDate ? formatDate(modalEntry.lines[0].TheDate) : '-'}</span>
+                </div>
+                <div>
+                  <span className="text-slate-500 block text-[10px]">نوع السند:</span>
+                  <span className="font-bold text-slate-900">{modalEntry.lines[0]?.DocType || 'قيد محاسبي'}</span>
+                </div>
+                <div>
+                  <span className="text-slate-500 block text-[10px]">حالة القيد:</span>
+                  <span className="font-bold text-emerald-700 flex items-center gap-1">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                    <span>قيد متوازن ومعتمد</span>
+                  </span>
+                </div>
+              </div>
+
+              {/* 3. Voucher Transactions Table */}
               <div className="overflow-x-auto">
-                <table className="w-full text-right text-xs border border-slate-200 rounded-xl overflow-hidden">
-                  <thead className="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
+                <table className="w-full text-right text-xs border border-slate-300 rounded-xl overflow-hidden voucher-official-table">
+                  <thead className="bg-slate-100 text-slate-800 font-bold border-b border-slate-300">
                     <tr>
-                      <th className="py-2.5 px-3 font-mono">رقم الحساب</th>
-                      <th className="py-2.5 px-3">اسم الحساب</th>
-                      <th className="py-2.5 px-3 font-mono text-left bg-rose-50 text-rose-800">مدين (جنيه)</th>
-                      <th className="py-2.5 px-3 font-mono text-left bg-emerald-50 text-emerald-800">دائن (جنيه)</th>
-                      <th className="py-2.5 px-3 font-mono text-left bg-blue-50 text-blue-800">مدين ($)</th>
-                      <th className="py-2.5 px-3 font-mono text-left bg-blue-50 text-blue-800">دائن ($)</th>
-                      <th className="py-2.5 px-3">البيان والشرح</th>
+                      <th className="py-2 px-2.5 w-10 text-center font-mono">#</th>
+                      <th className="py-2 px-2.5 w-28 font-mono">رقم الحساب</th>
+                      <th className="py-2 px-2.5 w-48">اسم الحساب</th>
+                      <th className="py-2 px-2.5">البيان والشرح والتفاصيل</th>
+                      <th className="py-2 px-2.5 w-28 font-mono text-left bg-rose-50/70 text-rose-900 border-r border-slate-300">مدين (ج.س)</th>
+                      <th className="py-2 px-2.5 w-28 font-mono text-left bg-emerald-50/70 text-emerald-900 border-r border-slate-300">دائن (ج.س)</th>
+                      <th className="py-2 px-2.5 w-24 font-mono text-left bg-blue-50/70 text-blue-900 border-r border-slate-300">مدين ($)</th>
+                      <th className="py-2 px-2.5 w-24 font-mono text-left bg-blue-50/70 text-blue-900 border-r border-slate-300">دائن ($)</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100 font-mono">
-                    {modalEntry.lines.map((l) => (
-                      <tr key={l.Id} className="hover:bg-slate-50 transition">
-                        <td className="py-2.5 px-3 text-slate-600 font-semibold">{l.AccountNumber}</td>
-                        <td className="py-2.5 px-3 font-sans font-bold text-slate-900">{l.AccountName}</td>
-                        <td className="py-2.5 px-3 text-left font-bold text-rose-700 bg-rose-50/20">
+                  <tbody className="divide-y divide-slate-200 font-mono">
+                    {modalEntry.lines.map((l, idx) => (
+                      <tr key={l.Id} className="hover:bg-slate-50/80 transition">
+                        <td className="py-2 px-2 text-center text-slate-500 font-semibold">{idx + 1}</td>
+                        <td className="py-2 px-2.5 text-slate-700 font-semibold">{l.AccountNumber}</td>
+                        <td className="py-2 px-2.5 font-sans font-bold text-slate-900">{l.AccountName}</td>
+                        <td className="py-2 px-2.5 font-sans text-slate-700 leading-relaxed">{l.Detail || '-'}</td>
+                        <td className="py-2 px-2.5 text-left font-bold text-rose-700 bg-rose-50/20 border-r border-slate-200">
                           {l.Debtor > 0 ? formatCurrency(l.Debtor) : '-'}
                         </td>
-                        <td className="py-2.5 px-3 text-left font-bold text-emerald-700 bg-emerald-50/20">
+                        <td className="py-2 px-2.5 text-left font-bold text-emerald-700 bg-emerald-50/20 border-r border-slate-200">
                           {l.Creditor > 0 ? formatCurrency(l.Creditor) : '-'}
                         </td>
-                        <td className="py-2.5 px-3 text-left font-bold text-blue-700 bg-blue-50/20">
+                        <td className="py-2 px-2.5 text-left font-bold text-blue-700 bg-blue-50/20 border-r border-slate-200">
                           {l.DebtorDolar > 0 ? `$${formatCurrency(l.DebtorDolar)}` : '-'}
                         </td>
-                        <td className="py-2.5 px-3 text-left font-bold text-blue-700 bg-blue-50/20">
+                        <td className="py-2 px-2.5 text-left font-bold text-blue-700 bg-blue-50/20 border-r border-slate-200">
                           {l.CreditorDolar > 0 ? `$${formatCurrency(l.CreditorDolar)}` : '-'}
                         </td>
-                        <td className="py-2.5 px-3 font-sans text-slate-700 max-w-xs">{l.Detail || '-'}</td>
                       </tr>
                     ))}
                   </tbody>
-                  <tfoot className="bg-slate-100 font-mono font-bold text-slate-900 border-t border-slate-200">
+                  <tfoot className="bg-slate-100 font-mono font-bold text-slate-900 border-t-2 border-slate-400">
                     <tr>
-                      <td colSpan={2} className="py-3 px-3 font-sans text-left text-sm">
+                      <td colSpan={4} className="py-2.5 px-3 font-sans text-left text-xs font-black">
                         الإجمالي العام للقيد:
                       </td>
-                      <td className="py-3 px-3 text-left text-rose-700 text-sm bg-rose-50/40">
+                      <td className="py-2.5 px-2.5 text-left text-rose-800 text-xs bg-rose-50/50 border-r border-slate-300">
                         {formatCurrency(modalEntry.lines.reduce((s, x) => s + (x.Debtor || 0), 0))} ج.س
                       </td>
-                      <td className="py-3 px-3 text-left text-emerald-700 text-sm bg-emerald-50/40">
+                      <td className="py-2.5 px-2.5 text-left text-emerald-800 text-xs bg-emerald-50/50 border-r border-slate-300">
                         {formatCurrency(modalEntry.lines.reduce((s, x) => s + (x.Creditor || 0), 0))} ج.س
                       </td>
-                      <td className="py-3 px-3 text-left text-blue-800 text-sm bg-blue-50/40">
+                      <td className="py-2.5 px-2.5 text-left text-blue-900 text-xs bg-blue-50/50 border-r border-slate-300">
                         ${formatCurrency(modalEntry.lines.reduce((s, x) => s + (x.DebtorDolar || 0), 0))}
                       </td>
-                      <td className="py-3 px-3 text-left text-blue-800 text-sm bg-blue-50/40">
+                      <td className="py-2.5 px-2.5 text-left text-blue-900 text-xs bg-blue-50/50 border-r border-slate-300">
                         ${formatCurrency(modalEntry.lines.reduce((s, x) => s + (x.CreditorDolar || 0), 0))}
-                      </td>
-                      <td className="py-3 px-3 text-emerald-700 font-sans text-xs">
-                        ● القيد متوازن
                       </td>
                     </tr>
                   </tfoot>
                 </table>
               </div>
+
+              {/* 4. Official Signatures and Approvals (Boxed) */}
+              <div className="pt-4 mt-2">
+                <div className="grid grid-cols-3 gap-4 text-center text-xs">
+                  <div className="border border-slate-300 rounded-xl p-3 bg-slate-50/40">
+                    <div className="font-bold text-slate-900 mb-5">إعداد وتنظيم / المحاسب</div>
+                    <div className="border-b border-dashed border-slate-400 mb-2"></div>
+                    <div className="text-[10px] text-slate-500">التوقيع والتاريخ</div>
+                  </div>
+                  <div className="border border-slate-300 rounded-xl p-3 bg-slate-50/40">
+                    <div className="font-bold text-slate-900 mb-5">مراجعة وتدقيق / المراجع المالي</div>
+                    <div className="border-b border-dashed border-slate-400 mb-2"></div>
+                    <div className="text-[10px] text-slate-500">التوقيع والتاريخ</div>
+                  </div>
+                  <div className="border border-slate-300 rounded-xl p-3 bg-slate-50/40">
+                    <div className="font-bold text-slate-900 mb-5">اعتماد الصرف / المدير المالي</div>
+                    <div className="border-b border-dashed border-slate-400 mb-2"></div>
+                    <div className="text-[10px] text-slate-500">التوقيع والتاريخ</div>
+                  </div>
+                </div>
+
+                <div className="print-only text-center text-[9px] text-slate-400 pt-3 border-t border-slate-200 mt-3 font-mono">
+                  الرويال للتطوير العقاري • وثيقة محاسبية رسمية مستخرجة آلياً من النظام المالي • صفحة 1 من 1
+                </div>
+              </div>
             </div>
 
-            <div className="px-6 py-3 bg-slate-50 border-t border-slate-200 flex justify-end">
+            {/* Screen Close Button Footer (hidden on print) */}
+            <div className="px-6 py-3 bg-slate-50 border-t border-slate-200 flex justify-end no-print">
               <button
                 onClick={() => setModalEntry(null)}
-                className="bg-slate-800 hover:bg-slate-900 text-white font-bold px-5 py-2 rounded-xl text-xs transition shadow-xs"
+                className="bg-slate-800 hover:bg-slate-900 text-white font-bold px-5 py-2 rounded-xl text-xs transition shadow-xs cursor-pointer"
               >
                 إغلاق النافذة
               </button>
