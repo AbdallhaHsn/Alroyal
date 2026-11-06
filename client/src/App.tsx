@@ -370,7 +370,7 @@ export default function App() {
   const [glCurrency, setGlCurrency] = useState<'EGP' | 'USD' | 'BOTH'>('EGP');
   const [glMode, setGlMode] = useState<'detailed' | 'summary'>('detailed');
   const [glGeneralAccounts, setGlGeneralAccounts] = useState<GeneralAccountItem[]>([]);
-  const [glSelectedCodes, setGlSelectedCodes] = useState<string[]>(['010201', '010103']);
+  const [glSelectedCodes, setGlSelectedCodes] = useState<string[]>([]);
   const [glAccountSearch, setGlAccountSearch] = useState('');
   const [glAccountPickerOpen, setGlAccountPickerOpen] = useState(false);
   const [glSelectedCategory, setGlSelectedCategory] = useState<string>('all');
@@ -380,7 +380,7 @@ export default function App() {
 
   // REPORT: SUB-ACCOUNT LEDGER STATE
   const [subAccountsList, setSubAccountsList] = useState<SubAccountItem[]>([]);
-  const [selectedSubAccountCode, setSelectedSubAccountCode] = useState<string>('01060103001');
+  const [selectedSubAccountCode, setSelectedSubAccountCode] = useState<string>('');
   const [subStartDate, setSubStartDate] = useState<string>('2021-01-01');
   const [subEndDate, setSubEndDate] = useState<string>('2023-12-31');
   const [subCurrency, setSubCurrency] = useState<'EGP' | 'USD' | 'BOTH'>('EGP');
@@ -1314,82 +1314,67 @@ export default function App() {
       <div className="flex-1 flex overflow-hidden z-10">
         {/* SIDEBAR */}
         <aside className="w-64 bg-white/95 backdrop-blur-md border-l border-slate-200/90 flex flex-col justify-between select-none shadow-[2px_0_8px_rgba(15,23,42,0.02)]">
-          <div>
-            <div className="px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">
-              الوحدات المحاسبية والتقارير
+          <div className="py-2">
+            {/* Group 1: General Modules */}
+            <div className="px-4 pt-2 pb-1.5 text-[11px] font-bold uppercase tracking-wider text-slate-400">
+              القوائم والسجلات
             </div>
-            <nav className="px-2 space-y-1">
+            <nav className="px-2 space-y-1 mb-4">
               <button
                 onClick={() => navigate('/dashboard')}
-                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs transition-all ${
+                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs transition-all ${
                   activeTab === 'dashboard'
                     ? 'bg-blue-600 text-white font-bold shadow-md shadow-blue-600/25'
                     : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 font-semibold'
                 }`}
               >
-                <div className="flex items-center gap-2.5">
-                  <LayoutDashboard className={`w-4 h-4 ${activeTab === 'dashboard' ? 'text-white' : 'text-slate-400'}`} />
-                  <span>لوحة المؤشرات والرقابة</span>
-                </div>
-                <span className={`text-[10px] px-1.5 py-0.5 rounded font-mono font-semibold ${activeTab === 'dashboard' ? 'bg-blue-700 text-white' : 'bg-slate-100 text-slate-500'}`}>
-                  KPI
-                </span>
+                <LayoutDashboard className={`w-4 h-4 shrink-0 ${activeTab === 'dashboard' ? 'text-white' : 'text-slate-400'}`} />
+                <span>لوحة المؤشرات والرقابة</span>
               </button>
 
               <button
                 onClick={() => navigate('/transactions')}
-                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs transition-all ${
+                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs transition-all ${
                   activeTab === 'transactions'
                     ? 'bg-blue-600 text-white font-bold shadow-md shadow-blue-600/25'
                     : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 font-semibold'
                 }`}
               >
-                <div className="flex items-center gap-2.5">
-                  <ReceiptText className={`w-4 h-4 ${activeTab === 'transactions' ? 'text-white' : 'text-slate-400'}`} />
-                  <span>دفتر وسجل القيود المحاسبية</span>
-                </div>
-                <span className={`text-[10px] px-1.5 py-0.5 rounded font-mono font-semibold ${activeTab === 'transactions' ? 'bg-blue-700 text-white' : 'bg-slate-100 text-slate-500'}`}>
-                  2.3K قيد
-                </span>
+                <ReceiptText className={`w-4 h-4 shrink-0 ${activeTab === 'transactions' ? 'text-white' : 'text-slate-400'}`} />
+                <span>دفتر وسجل القيود المحاسبية</span>
               </button>
 
               <button
                 onClick={() => navigate('/accounts')}
-                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs transition-all ${
+                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs transition-all ${
                   activeTab === 'accounts'
                     ? 'bg-blue-600 text-white font-bold shadow-md shadow-blue-600/25'
                     : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 font-semibold'
                 }`}
               >
-                <div className="flex items-center gap-2.5">
-                  <FolderTree className={`w-4 h-4 ${activeTab === 'accounts' ? 'text-white' : 'text-slate-400'}`} />
-                  <span>دليل شجرة الحسابات الهرمية</span>
-                </div>
-                <span className={`text-[10px] px-1.5 py-0.5 rounded font-mono font-semibold ${activeTab === 'accounts' ? 'bg-blue-700 text-white' : 'bg-slate-100 text-slate-500'}`}>
-                  842
-                </span>
+                <FolderTree className={`w-4 h-4 shrink-0 ${activeTab === 'accounts' ? 'text-white' : 'text-slate-400'}`} />
+                <span>دليل شجرة الحسابات الهرمية</span>
               </button>
+            </nav>
 
+            {/* Group 2: Financial Reports */}
+            <div className="px-4 pt-2 pb-1.5 text-[11px] font-bold uppercase tracking-wider text-slate-400 border-t border-slate-100">
+              التقارير المالية المعتمدة
+            </div>
+            <nav className="px-2 space-y-1">
               <button
                 onClick={() => {
                   setReportTab('generalLedger');
                   navigate('/reports');
                 }}
-                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs transition-all ${
+                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs transition-all ${
                   activeTab === 'reports' && reportTab === 'generalLedger'
                     ? 'bg-blue-600 text-white font-bold shadow-md shadow-blue-600/25'
                     : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 font-semibold'
                 }`}
               >
-                <div className="flex items-center gap-2.5">
-                  <BookOpen className={`w-4 h-4 ${activeTab === 'reports' && reportTab === 'generalLedger' ? 'text-white' : 'text-slate-400'}`} />
-                  <span>كشف الحسابات العامة</span>
-                </div>
-                <span className={`text-[10px] px-1.5 py-0.5 rounded font-mono font-semibold ${
-                  activeTab === 'reports' && reportTab === 'generalLedger' ? 'bg-blue-700 text-white' : 'bg-blue-50 text-blue-700 border border-blue-200'
-                }`}>
-                  عام
-                </span>
+                <BookOpen className={`w-4 h-4 shrink-0 ${activeTab === 'reports' && reportTab === 'generalLedger' ? 'text-white' : 'text-slate-400'}`} />
+                <span>كشف الحسابات العامة</span>
               </button>
 
               <button
@@ -1397,21 +1382,14 @@ export default function App() {
                   setReportTab('subAccountLedger');
                   navigate('/reports');
                 }}
-                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs transition-all ${
+                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs transition-all ${
                   activeTab === 'reports' && reportTab === 'subAccountLedger'
                     ? 'bg-blue-600 text-white font-bold shadow-md shadow-blue-600/25'
                     : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 font-semibold'
                 }`}
               >
-                <div className="flex items-center gap-2.5">
-                  <FileText className={`w-4 h-4 ${activeTab === 'reports' && reportTab === 'subAccountLedger' ? 'text-white' : 'text-slate-400'}`} />
-                  <span>كشف الحسابات الفرعية</span>
-                </div>
-                <span className={`text-[10px] px-1.5 py-0.5 rounded font-mono font-semibold ${
-                  activeTab === 'reports' && reportTab === 'subAccountLedger' ? 'bg-blue-700 text-white' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                }`}>
-                  جديد
-                </span>
+                <FileText className={`w-4 h-4 shrink-0 ${activeTab === 'reports' && reportTab === 'subAccountLedger' ? 'text-white' : 'text-slate-400'}`} />
+                <span>كشف الحسابات الفرعية</span>
               </button>
 
               <button
@@ -1419,21 +1397,14 @@ export default function App() {
                   setReportTab('trialBalance');
                   navigate('/reports');
                 }}
-                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs transition-all ${
+                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs transition-all ${
                   activeTab === 'reports' && reportTab === 'trialBalance'
                     ? 'bg-blue-600 text-white font-bold shadow-md shadow-blue-600/25'
                     : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 font-semibold'
                 }`}
               >
-                <div className="flex items-center gap-2.5">
-                  <Scale className={`w-4 h-4 ${activeTab === 'reports' && reportTab === 'trialBalance' ? 'text-white' : 'text-slate-400'}`} />
-                  <span>ميزان المراجعة الشامل</span>
-                </div>
-                <span className={`text-[10px] px-1.5 py-0.5 rounded font-mono font-semibold ${
-                  activeTab === 'reports' && reportTab === 'trialBalance' ? 'bg-blue-700 text-white' : 'bg-slate-100 text-slate-500'
-                }`}>
-                  ميزان
-                </span>
+                <Scale className={`w-4 h-4 shrink-0 ${activeTab === 'reports' && reportTab === 'trialBalance' ? 'text-white' : 'text-slate-400'}`} />
+                <span>ميزان المراجعة الشامل</span>
               </button>
             </nav>
           </div>
