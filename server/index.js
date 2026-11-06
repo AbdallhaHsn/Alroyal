@@ -1,6 +1,6 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const sql = require('mssql/msnodesqlv8');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -8,14 +8,56 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-const dbConfig = {
-    server: 'localhost',
-    database: 'RoyalDb',
-    driver: 'msnodesqlv8',
-    options: {
-        trustedConnection: true
+// Dynamic SQL Server configuration (supports Linux production & Windows dev)
+let sql;
+let dbConfig;
+
+if (process.env.DB_USER) {
+    // Linux / Ubuntu production with SQL Server Authentication (tedious driver)
+    sql = require('mssql');
+    dbConfig = {
+        user: process.env.DB_USER,
+        password: process.env.DB_PASSWORD,
+        server: process.env.DB_SERVER || 'localhost',
+        port: parseInt(process.env.DB_PORT || '1433', 10),
+        database: process.env.DB_NAME || 'RoyalDb',
+        options: {
+            encrypt: process.env.DB_ENCRYPT === 'true',
+            trustServerCertificate: true,
+            enableArithAbort: true
+        },
+        pool: {
+            max: 20,
+            min: 0,
+            idleTimeoutMillis: 30000
+        }
+    };
+} else {
+    // Windows Local Development (Windows Authentication via msnodesqlv8)
+    try {
+        sql = require('mssql/msnodesqlv8');
+        dbConfig = {
+            server: process.env.DB_SERVER || 'localhost',
+            database: process.env.DB_NAME || 'RoyalDb',
+            driver: 'msnodesqlv8',
+            options: {
+                trustedConnection: true
+            }
+        };
+    } catch {
+        sql = require('mssql');
+        dbConfig = {
+            user: process.env.DB_USER || 'sa',
+            password: process.env.DB_PASSWORD || '',
+            server: process.env.DB_SERVER || 'localhost',
+            port: parseInt(process.env.DB_PORT || '1433', 10),
+            database: process.env.DB_NAME || 'RoyalDb',
+            options: {
+                trustServerCertificate: true
+            }
+        };
     }
-};
+}
 
 let pool;
 async function getPool() {
