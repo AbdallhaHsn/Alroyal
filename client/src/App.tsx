@@ -2925,105 +2925,106 @@ export default function App() {
             </div>
 
             {/* Voucher Body (Printable & Screen) */}
-            <div className="p-6 overflow-y-auto space-y-4 voucher-modal-body">
+            <div className="p-6 overflow-y-auto space-y-3 voucher-modal-body bg-white">
               
               {/* 1. Official Printable Letterhead (Printed only) */}
-              <div className="print-only border-b-2 border-slate-900 pb-3 mb-4">
-                <div className="flex items-start justify-between">
+              <div className="print-only border-b-2 border-slate-900 pb-3 mb-3">
+                <div className="flex items-center justify-between">
                   <div className="text-right">
-                    <h1 className="text-xl font-black text-slate-950 font-sans tracking-tight">الرويال للتطوير العقاري</h1>
+                    <h1 className="text-xl font-black text-slate-950 font-sans">الرويال للتطوير العقاري</h1>
                     <p className="text-xs font-bold text-slate-700 mt-0.5">الإدارة المالية والحسابات العامة</p>
-                    <p className="text-[10px] text-slate-500 font-mono">نظام الإدارة المالية والمحاسبية الموحد</p>
+                    <p className="text-[11px] text-slate-600 font-sans">النظام المالي والمحاسبي الموحد</p>
                   </div>
 
-                  <div className="text-center px-6 py-2 border-2 border-slate-900 rounded-xl bg-slate-50">
+                  <div className="text-center px-8 py-2 border-2 border-slate-900 rounded-xl bg-slate-50">
                     <h2 className="text-lg font-black text-slate-900 font-sans">سند قيد محاسبي</h2>
-                    <p className="text-[10px] font-mono uppercase tracking-widest text-slate-600 font-bold">Journal Voucher</p>
+                    <p className="text-[11px] font-mono uppercase tracking-widest text-slate-600 font-bold">JOURNAL VOUCHER</p>
                   </div>
 
-                  <div className="text-left text-[10.5px] space-y-1">
-                    <div><span className="text-slate-500">رقم القيد: </span><span className="font-mono font-bold text-slate-900">{modalEntry.reqNum}</span></div>
-                    <div><span className="text-slate-500">تاريخ القيد: </span><span className="font-mono font-bold text-slate-900">{modalEntry.lines[0]?.TheDate ? formatDate(modalEntry.lines[0].TheDate) : '-'}</span></div>
+                  <div className="text-left text-[11px] space-y-1">
+                    <div><span className="text-slate-500">رقم القيد: </span><span className="font-mono font-bold text-slate-950 text-xs">{modalEntry.reqNum}</span></div>
+                    <div><span className="text-slate-500">تاريخ القيد: </span><span className="font-mono font-bold text-slate-950">{modalEntry.lines[0]?.TheDate ? formatDate(modalEntry.lines[0].TheDate) : '-'}</span></div>
                     <div><span className="text-slate-500">تاريخ الطباعة: </span><span className="font-mono text-slate-700">{new Date().toLocaleDateString('ar-EG')}</span></div>
                   </div>
                 </div>
               </div>
 
-              {/* 2. Voucher Metadata Bar */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs">
+              {/* 2. Voucher Metadata Summary Bar */}
+              <div className="flex items-center justify-between bg-slate-50 border border-slate-300 rounded-lg px-4 py-2 text-xs font-sans">
                 <div>
-                  <span className="text-slate-500 block text-[10px]">رقم القيد / السند:</span>
-                  <span className="font-mono font-bold text-slate-900">{modalEntry.reqNum}</span>
+                  <span className="text-slate-500">رقم القيد: </span>
+                  <span className="font-mono font-bold text-slate-950">{modalEntry.reqNum}</span>
                 </div>
                 <div>
-                  <span className="text-slate-500 block text-[10px]">تاريخ القيد:</span>
-                  <span className="font-mono font-bold text-slate-900">{modalEntry.lines[0]?.TheDate ? formatDate(modalEntry.lines[0].TheDate) : '-'}</span>
+                  <span className="text-slate-500">تاريخ العملية: </span>
+                  <span className="font-mono font-bold text-slate-950">{modalEntry.lines[0]?.TheDate ? formatDate(modalEntry.lines[0].TheDate) : '-'}</span>
                 </div>
                 <div>
-                  <span className="text-slate-500 block text-[10px]">نوع السند:</span>
+                  <span className="text-slate-500">نوع السند: </span>
                   <span className="font-bold text-slate-900">{modalEntry.lines[0]?.DocType || 'قيد محاسبي'}</span>
                 </div>
                 <div>
-                  <span className="text-slate-500 block text-[10px]">حالة القيد:</span>
-                  <span className="font-bold text-emerald-700 flex items-center gap-1">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                    <span>قيد متوازن ومعتمد</span>
-                  </span>
+                  <span className="text-slate-500">العملات: </span>
+                  <span className="font-bold text-slate-800">جنيه سوداني (ج.س) + دولار ($)</span>
+                </div>
+                <div className="flex items-center gap-1.5 text-emerald-800 font-bold">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>قيد معتمد ومتوازن</span>
                 </div>
               </div>
 
-              {/* 3. Voucher Transactions Table */}
+              {/* 3. Voucher Transactions Table with Guaranteed Fixed Percentages */}
               <div className="overflow-x-auto">
-                <table className="w-full text-right text-xs border border-slate-300 rounded-xl overflow-hidden voucher-official-table">
-                  <thead className="bg-slate-100 text-slate-800 font-bold border-b border-slate-300">
+                <table className="w-full text-right text-xs border border-slate-400 rounded-xl overflow-hidden voucher-official-table">
+                  <thead className="bg-slate-100 text-slate-900 font-bold border-b-2 border-slate-400">
                     <tr>
-                      <th className="py-2 px-2.5 w-10 text-center font-mono">#</th>
-                      <th className="py-2 px-2.5 w-28 font-mono">رقم الحساب</th>
-                      <th className="py-2 px-2.5 w-48">اسم الحساب</th>
-                      <th className="py-2 px-2.5">البيان والشرح والتفاصيل</th>
-                      <th className="py-2 px-2.5 w-28 font-mono text-left bg-rose-50/70 text-rose-900 border-r border-slate-300">مدين (ج.س)</th>
-                      <th className="py-2 px-2.5 w-28 font-mono text-left bg-emerald-50/70 text-emerald-900 border-r border-slate-300">دائن (ج.س)</th>
-                      <th className="py-2 px-2.5 w-24 font-mono text-left bg-blue-50/70 text-blue-900 border-r border-slate-300">مدين ($)</th>
-                      <th className="py-2 px-2.5 w-24 font-mono text-left bg-blue-50/70 text-blue-900 border-r border-slate-300">دائن ($)</th>
+                      <th className="w-[4%] py-2 px-1 text-center font-mono">#</th>
+                      <th className="w-[13%] py-2 px-1.5 font-mono text-center">رقم الحساب</th>
+                      <th className="w-[21%] py-2 px-2 text-right">اسم الحساب</th>
+                      <th className="w-[26%] py-2 px-2 text-right">البيان والشرح والتفاصيل</th>
+                      <th className="w-[12%] py-2 px-2 font-mono text-left bg-rose-50/80 text-rose-900 border-r border-slate-300">مدين (ج.س)</th>
+                      <th className="w-[12%] py-2 px-2 font-mono text-left bg-emerald-50/80 text-emerald-900 border-r border-slate-300">دائن (ج.س)</th>
+                      <th className="w-[6%] py-2 px-1 font-mono text-left bg-blue-50/80 text-blue-900 border-r border-slate-300">مدين ($)</th>
+                      <th className="w-[6%] py-2 px-1 font-mono text-left bg-blue-50/80 text-blue-900 border-r border-slate-300">دائن ($)</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-200 font-mono">
+                  <tbody className="divide-y divide-slate-300 font-mono">
                     {modalEntry.lines.map((l, idx) => (
                       <tr key={l.Id} className="hover:bg-slate-50/80 transition">
-                        <td className="py-2 px-2 text-center text-slate-500 font-semibold">{idx + 1}</td>
-                        <td className="py-2 px-2.5 text-slate-700 font-semibold">{l.AccountNumber}</td>
-                        <td className="py-2 px-2.5 font-sans font-bold text-slate-900">{l.AccountName}</td>
-                        <td className="py-2 px-2.5 font-sans text-slate-700 leading-relaxed">{l.Detail || '-'}</td>
-                        <td className="py-2 px-2.5 text-left font-bold text-rose-700 bg-rose-50/20 border-r border-slate-200">
+                        <td className="w-[4%] py-2 px-1 text-center text-slate-500 font-semibold">{idx + 1}</td>
+                        <td className="w-[13%] py-2 px-1.5 text-center text-slate-800 font-semibold">{l.AccountNumber}</td>
+                        <td className="w-[21%] py-2 px-2 font-sans font-bold text-slate-900">{l.AccountName}</td>
+                        <td className="w-[26%] py-2 px-2 font-sans text-slate-700 leading-normal">{l.Detail || '-'}</td>
+                        <td className="w-[12%] py-2 px-2 text-left font-bold text-rose-700 bg-rose-50/20 border-r border-slate-200">
                           {l.Debtor > 0 ? formatCurrency(l.Debtor) : '-'}
                         </td>
-                        <td className="py-2 px-2.5 text-left font-bold text-emerald-700 bg-emerald-50/20 border-r border-slate-200">
+                        <td className="w-[12%] py-2 px-2 text-left font-bold text-emerald-700 bg-emerald-50/20 border-r border-slate-200">
                           {l.Creditor > 0 ? formatCurrency(l.Creditor) : '-'}
                         </td>
-                        <td className="py-2 px-2.5 text-left font-bold text-blue-700 bg-blue-50/20 border-r border-slate-200">
+                        <td className="w-[6%] py-2 px-1 text-left font-bold text-blue-700 bg-blue-50/20 border-r border-slate-200 text-[9.5px]">
                           {l.DebtorDolar > 0 ? `$${formatCurrency(l.DebtorDolar)}` : '-'}
                         </td>
-                        <td className="py-2 px-2.5 text-left font-bold text-blue-700 bg-blue-50/20 border-r border-slate-200">
+                        <td className="w-[6%] py-2 px-1 text-left font-bold text-blue-700 bg-blue-50/20 border-r border-slate-200 text-[9.5px]">
                           {l.CreditorDolar > 0 ? `$${formatCurrency(l.CreditorDolar)}` : '-'}
                         </td>
                       </tr>
                     ))}
                   </tbody>
-                  <tfoot className="bg-slate-100 font-mono font-bold text-slate-900 border-t-2 border-slate-400">
+                  <tfoot className="bg-slate-100 font-mono font-bold text-slate-900 border-t-2 border-slate-500">
                     <tr>
                       <td colSpan={4} className="py-2.5 px-3 font-sans text-left text-xs font-black">
                         الإجمالي العام للقيد:
                       </td>
-                      <td className="py-2.5 px-2.5 text-left text-rose-800 text-xs bg-rose-50/50 border-r border-slate-300">
+                      <td className="w-[12%] py-2.5 px-2 text-left text-rose-800 text-xs bg-rose-50/60 border-r border-slate-300">
                         {formatCurrency(modalEntry.lines.reduce((s, x) => s + (x.Debtor || 0), 0))} ج.س
                       </td>
-                      <td className="py-2.5 px-2.5 text-left text-emerald-800 text-xs bg-emerald-50/50 border-r border-slate-300">
+                      <td className="w-[12%] py-2.5 px-2 text-left text-emerald-800 text-xs bg-emerald-50/60 border-r border-slate-300">
                         {formatCurrency(modalEntry.lines.reduce((s, x) => s + (x.Creditor || 0), 0))} ج.س
                       </td>
-                      <td className="py-2.5 px-2.5 text-left text-blue-900 text-xs bg-blue-50/50 border-r border-slate-300">
+                      <td className="w-[6%] py-2.5 px-1 text-left text-blue-900 text-[9.5px] bg-blue-50/60 border-r border-slate-300">
                         ${formatCurrency(modalEntry.lines.reduce((s, x) => s + (x.DebtorDolar || 0), 0))}
                       </td>
-                      <td className="py-2.5 px-2.5 text-left text-blue-900 text-xs bg-blue-50/50 border-r border-slate-300">
+                      <td className="w-[6%] py-2.5 px-1 text-left text-blue-900 text-[9.5px] bg-blue-50/60 border-r border-slate-300">
                         ${formatCurrency(modalEntry.lines.reduce((s, x) => s + (x.CreditorDolar || 0), 0))}
                       </td>
                     </tr>
@@ -3031,28 +3032,41 @@ export default function App() {
                 </table>
               </div>
 
-              {/* 4. Official Signatures and Approvals (Boxed) */}
-              <div className="pt-4 mt-2">
+              {/* 4. Amount in Words (Tafqeet & Balance Summary) */}
+              <div className="flex items-center justify-between text-xs font-sans bg-slate-50 border border-slate-300 rounded-lg p-2.5">
+                <div>
+                  <span className="font-bold text-slate-700">المبلغ الإجمالي كتابةً: </span>
+                  <span className="font-bold text-slate-950 font-sans">
+                    فقط {formatCurrency(modalEntry.lines.reduce((s, x) => s + (x.Debtor || 0), 0))} جنيهاً سودانياً لا غير.
+                  </span>
+                </div>
+                <div className="text-emerald-800 font-bold font-sans">
+                  ● معتمد ومطابق لدفتر اليومية العامة
+                </div>
+              </div>
+
+              {/* 5. Official Signatures and Approvals (Boxed) */}
+              <div className="pt-2">
                 <div className="grid grid-cols-3 gap-4 text-center text-xs">
-                  <div className="border border-slate-300 rounded-xl p-3 bg-slate-50/40">
-                    <div className="font-bold text-slate-900 mb-5">إعداد وتنظيم / المحاسب</div>
+                  <div className="border border-slate-300 rounded-xl p-3 bg-white">
+                    <div className="font-bold text-slate-900 mb-6 font-sans">إعداد وتنظيم / المحاسب</div>
                     <div className="border-b border-dashed border-slate-400 mb-2"></div>
-                    <div className="text-[10px] text-slate-500">التوقيع والتاريخ</div>
+                    <div className="text-[10px] text-slate-500 font-sans">الاسم والتوقيع</div>
                   </div>
-                  <div className="border border-slate-300 rounded-xl p-3 bg-slate-50/40">
-                    <div className="font-bold text-slate-900 mb-5">مراجعة وتدقيق / المراجع المالي</div>
+                  <div className="border border-slate-300 rounded-xl p-3 bg-white">
+                    <div className="font-bold text-slate-900 mb-6 font-sans">مراجعة وتدقيق / المراجع المالي</div>
                     <div className="border-b border-dashed border-slate-400 mb-2"></div>
-                    <div className="text-[10px] text-slate-500">التوقيع والتاريخ</div>
+                    <div className="text-[10px] text-slate-500 font-sans">الاسم والتوقيع</div>
                   </div>
-                  <div className="border border-slate-300 rounded-xl p-3 bg-slate-50/40">
-                    <div className="font-bold text-slate-900 mb-5">اعتماد الصرف / المدير المالي</div>
+                  <div className="border border-slate-300 rounded-xl p-3 bg-white">
+                    <div className="font-bold text-slate-900 mb-6 font-sans">اعتماد الصرف / المدير المالي</div>
                     <div className="border-b border-dashed border-slate-400 mb-2"></div>
-                    <div className="text-[10px] text-slate-500">التوقيع والتاريخ</div>
+                    <div className="text-[10px] text-slate-500 font-sans">الاسم والتوقيع</div>
                   </div>
                 </div>
 
-                <div className="print-only text-center text-[9px] text-slate-400 pt-3 border-t border-slate-200 mt-3 font-mono">
-                  الرويال للتطوير العقاري • وثيقة محاسبية رسمية مستخرجة آلياً من النظام المالي • صفحة 1 من 1
+                <div className="print-only text-center text-[10px] text-slate-500 pt-3 border-t border-slate-200 mt-3 font-sans">
+                  الرويال للتطوير العقاري • وثيقة محاسبية رسمية مستخرجة آلياً من النظام المالي والمحاسبي • صفحة 1 من 1
                 </div>
               </div>
             </div>

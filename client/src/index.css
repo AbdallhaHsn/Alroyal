@@ -117,67 +117,91 @@
 @media print {
   @page {
     size: A4 portrait;
-    margin: 6mm 5mm 8mm 5mm;
+    margin: 6mm 6mm 6mm 6mm;
   }
 
   .print-only {
     display: block !important;
+    visibility: visible !important;
   }
 
-  body.voucher-modal-active main,
-  body.voucher-modal-active header,
-  body.voucher-modal-active aside,
-  body.voucher-modal-active .no-print {
-    display: none !important;
+  /* When printing voucher, isolate voucher modal exclusively */
+  body.voucher-modal-active * {
+    visibility: hidden;
+  }
+
+  body.voucher-modal-active .voucher-modal-card,
+  body.voucher-modal-active .voucher-modal-card * {
+    visibility: visible;
   }
 
   body.voucher-modal-active,
+  body.voucher-modal-active html,
   body.voucher-modal-active #root,
-  body.voucher-modal-active .voucher-modal-overlay {
-    position: static !important;
+  body.voucher-modal-active .min-h-screen,
+  body.voucher-modal-active .bg-enterprise-pattern {
     background: #ffffff !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    display: block !important;
+    background-image: none !important;
+  }
+
+  body.voucher-modal-active .voucher-modal-overlay {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
     width: 100% !important;
-    height: auto !important;
-    overflow: visible !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    background-image: none !important;
+    display: block !important;
   }
 
   body.voucher-modal-active .voucher-modal-card {
-    position: static !important;
-    border: none !important;
-    box-shadow: none !important;
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
     width: 100% !important;
     max-width: 100% !important;
     margin: 0 !important;
     padding: 0 !important;
-    overflow: visible !important;
+    border: none !important;
+    box-shadow: none !important;
     background: #ffffff !important;
   }
 
   body.voucher-modal-active .voucher-modal-body {
     padding: 0 !important;
+    margin: 0 !important;
     overflow: visible !important;
     max-height: none !important;
   }
 
+  body.voucher-modal-active .no-print,
+  body.voucher-modal-active .no-print * {
+    display: none !important;
+    visibility: hidden !important;
+  }
+
   .voucher-official-table {
-    border-collapse: collapse !important;
+    table-layout: fixed !important;
     width: 100% !important;
+    border-collapse: collapse !important;
   }
 
   .voucher-official-table th,
   .voucher-official-table td {
-    border: 1px solid #475569 !important;
+    border: 1px solid #334155 !important;
     padding: 4px 5px !important;
-    font-size: 9.5px !important;
+    font-size: 9px !important;
+    word-break: break-word !important;
+    overflow: hidden !important;
   }
 
   .voucher-official-table th {
     background-color: #f1f5f9 !important;
     color: #0f172a !important;
     font-weight: 700 !important;
+    text-align: center !important;
   }
 
   * {
